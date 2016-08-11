@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jack_Drifter</title>
+</head>
+<body>
+<div class="warp">
+    <ul>
+        <li>
+            <p><input type="text" name="owner"></p>
+        </li>
+        <li>
+            <p><input type="text" name=""></p>
+        </li>
+        <li>
+            <p><input type="text"></p>
+        </li>
+        <li>
+            <p><input type="text"></p>
+        </li>
+    </ul>
+</div>
+
+<script>
+
+    //        for (var t = 5; t < 10; t++) {
+    //            xhr(encodeURI("owner=bottle" + t + "&type=female&content=content" + t))
+    //        }
+    //    for (var i = 0; i < 5; i++) {
+    //        xhr(encodeURI("owner=bottle" + i + "&type=male&content=content" + i))
+    //    }
+
+
+    function xhr(data) {
+        var xhr = new XMLHttpRequest();
+        if (xhr) {
+            xhr.open('POST', '/api', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onreadystatechange = function () {
+                if ((xhr.readyState == 4) && (xhr.status == 200)) {
+                    alert("success!");
+                }
+            }
+
+        }
+        xhr.send(data)
+    }
+
+</script>
+</body>
+</html>
