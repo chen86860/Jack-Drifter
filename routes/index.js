@@ -1,16 +1,44 @@
 var express = require('express');
 var router = express.Router();
 var redis = require('../model/redis');
+var mongodb = require('../model/mongoose');
 
 /* GET drifter bottom. */
 router.route('/').get(function (req, res, next) {
     res.render('index')
 });
+router.route('/:user').get(function (req, res, next) {
+    mongodb.getAll(req.params.user, function (err, result) {
+        res.json(result)
+    })
+});
+
+router.route('/bottle/:_id').get(function (req, res, next) {
+    mongodb.getOne(req.params._id, function (result) {
+        res.json(result);
+    });
+});
+
+router.route('/reply/:_id').post(function (req, res, next) {
+    if (req.body.user && req.body.content) {
+        mongodb.reply(req.params._id, req.body, function (result) {
+            res.json(result);
+        })
+    } else {
+        return callback({code: 0, msg: '回复信息不完整呀～'});
+    }
+})
 router.route('/api')
     .get(function (req, res, next) {
-        if (req.query.owner) {
+        if (req.query.user) {
             if (req.query.type && (["male", "female"].indexOf(req.query.type) != -1)) {
                 redis.pick(req.query, function (result) {
+                    if (result.code === 1) {
+                        mongodb.save(req.query.user, result.msg, function (err) {
+                            if (err) return res.json({code: 0, msg: "获取信息失败"})
+                            return res.json(result);
+                        })
+                    }
                     res.json(result);
                 })
             } else {

@@ -23,16 +23,25 @@
             <p><input type="text"></p>
         </li>
     </ul>
+    <input type="button" id="insertButton" value="抛漂流瓶">
 </div>
 
 <script>
 
-    //        for (var t = 5; t < 10; t++) {
-    //            xhr(encodeURI("owner=bottle" + t + "&type=female&content=content" + t))
-    //        }
-    //    for (var i = 0; i < 5; i++) {
-    //        xhr(encodeURI("owner=bottle" + i + "&type=male&content=content" + i))
-    //    }
+    var insertButton = document.getElementById('insertButton');
+    insertButton.onclick = function () {
+        insertBottle();
+    };
+
+    function insertBottle() {
+
+        for (var i = 0; i < 5; i++) {
+            xhr(encodeURI("owner=bottle" + i + "&type=male&content=content" + i))
+        }
+        for (var t = 5; t < 10; t++) {
+            xhr(encodeURI("owner=bottle" + t + "&type=female&content=content" + t))
+        }
+    }
 
 
     function xhr(data) {
@@ -43,7 +52,7 @@
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onreadystatechange = function () {
                 if ((xhr.readyState == 4) && (xhr.status == 200)) {
-                    alert("success!");
+
                 }
             }
 
