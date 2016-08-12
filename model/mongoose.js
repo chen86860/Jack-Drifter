@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/Jack_drifter', {server: {poolSoze: 10}})
+mongoose.connect('mongodb://localhost/Jack_drifter', {server: {poolSoze: 10}});
 
 //定义漂流瓶模型，病设置数据存储到bottles集合
 var bottleModel = mongoose.model('Bottle', new mongoose.Schema(
@@ -13,7 +13,7 @@ var bottleModel = mongoose.model('Bottle', new mongoose.Schema(
 ));
 
 
-// //Scharm
+// //Schema
 // {
 //     bottle:["$picker","$owner"],
 //     message:[
@@ -42,7 +42,7 @@ exports.getOne = function (_id, callback) {
         if (err) return callback({code: 0, msg: "读取漂流瓶失败..."});
         callback({code: 1, msg: bottle})
     })
-}
+};
 
 exports.reply = function (_id, reply, callback) {
     reply.time = reply.time || Date.now();
@@ -75,8 +75,13 @@ exports.reply = function (_id, reply, callback) {
 };
 
 exports.getAll = function (user, callback) {
-    bottleModel.find({"bottle": user}, function (err, bottles) {
+    console.log(user);
+    bottleModel.find({bottle:user},function(err,result){
         if (err) return callback({code: 0, msg: "获取漂流瓶列表失败..."});
-        callback({code: 1, msg: bottles});
-    });
+        callback({code: 1, msg: result});
+    })
+    // bottleModel.find({bottle: user.toString()}, function (err, bottles) {
+    //     if (err) return callback({code: 0, msg: "获取漂流瓶列表失败..."});
+    //     callback({code: 1, msg: bottles});
+    // });
 };

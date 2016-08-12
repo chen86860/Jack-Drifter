@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -7,34 +8,99 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Jack_Drifter</title>
 </head>
+
 <body>
 <div class="warp">
-    <ul>
-        <li>
-            <p><input type="text" name="owner"></p>
-        </li>
-        <li>
-            <p><input type="text" name=""></p>
-        </li>
-        <li>
-            <p><input type="text"></p>
-        </li>
-        <li>
-            <p><input type="text"></p>
-        </li>
-    </ul>
-    <input type="button" id="insertButton" value="抛漂流瓶">
+    <form action="/api/" method="get" id='pickForm'>
+        <ul>
+            <li>
+                <p>用户名：<input type="text" name="user" required id="user"></p>
+            </li>
+            <li>
+                <p><select name="type" class="sexType">
+                    <option value="male" selected>男</option>
+                    <option value="female">女</option>
+                </select></p>
+            </li>
+            <li>
+                <p>
+                    <input type="submit" value="捡一个">
+                </p>
+            </li>
+        </ul>
+    </form>
+    <hr>
+    <form action="/api" method="post" id='throwForm'>
+        <ul>
+            <li>
+                <p>用户名：<input type="text" name="user" required id="owner"></p>
+            </li>
+            <li>
+                <p><select name="type" class="sexType">
+                    <option value="male" selected>男</option>
+                    <option value="female">女</option>
+                </select></p>
+            </li>
+            <li>
+                <p>内容：<input type="text" name="content" required id="content"></p>
+            </li>
+            <li>
+                <p>
+                    <input type="submit" value="扔一个">
+                </p>
+            </li>
+        </ul>
+    </form>
+
+    <input type="submit" id="insertButton" value="捡一个">
 </div>
 
 <script>
 
     var insertButton = document.getElementById('insertButton');
+    var pickForm = document.getElementById('pickForm');
+
+    var user = document.getElementById('user');
+    var sexType0 = document.getElementsByClassName('sexType')[0];
+    pickForm.onsubmit = function () {
+        var userdata = "user=" + user.value + "&type=" + ['male', 'female'][sexType0.selectedIndex];
+        xhr(null, 'get', '/api?' + userdata, function (err, result) {
+            if (err) return true;
+            console.log(result);
+        });
+        return false;
+    };
+
+    //owner,type,time,content
+    var owner = document.getElementById('owner');
+    var content = document.getElementById('content');
+    var throwForm = document.getElementById('throwForm');
+    var sexType1 = document.getElementsByClassName('sexType')[1];
+
+    throwForm.onsubmit = function () {
+
+        var time = Date.now();
+        var datas = "owner=" + owner.value + "&type=" + ['male', 'female'][sexType1.selectedIndex] + "&content=" + content.value + "&time=" + time;
+
+        xhr(datas, 'post', '/api', function (err, result) {
+            if (err) {
+                console.log("err");
+                return true;
+
+            } else {
+                console.log(result);
+            }
+        });
+        return false;
+    };
+
+
     insertButton.onclick = function () {
         insertBottle();
     };
 
-    function insertBottle() {
 
+    function insertBottle() {
         for (var i = 0; i < 5; i++) {
             xhr(encodeURI("owner=bottle" + i + "&type=male&content=content" + i))
         }
@@ -44,22 +110,28 @@
     }
 
 
-    function xhr(data) {
+    function xhr(data, method, url, callback) {
         var xhr = new XMLHttpRequest();
         if (xhr) {
-            xhr.open('POST', '/api', true);
+            xhr.open(method, url, true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onreadystatechange = function () {
                 if ((xhr.readyState == 4) && (xhr.status == 200)) {
-
+                    callback(false, xhr.responseText);
+                } else {
+                    callback(true, "err");
                 }
-            }
+            };
 
+        } else {
+            return true;
         }
-        xhr.send(data)
+        xhr.send(data);
+        return false;
     }
 
 </script>
 </body>
+
 </html>
