@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jack_Drifter</title>
+</head>
+<body>
+<form id="funForm" method="post">
+    <p>用户名<input type="text" name="username" id="username" required></p>
+    <p>密码<input type="password" name="password" id="password" required></p>
+    <p>邮箱<input type="email" name="email" id="email" required></p>
+    <p><input type="submit" value="登录"></p>
+</form>
+<script type="text/javascript">
+
+    var funForm = document.getElementById('funForm');
+    funForm.onsubmit = function () {
+        var username = document.getElementById('username');
+        var password = document.getElementById('password');
+        var email = document.getElementById('email');
+        var datas = "username=" + username.value + "&password=" + password.value + "&email=" + email.value;
+        xhr(datas, 'post', '/user/signup', function (err, result) {
+            if (err) {
+                return true
+            } else {
+                if (result.code == 200) {
+                    window.location.href = 'http://localhost:3000/';
+                } else if (result.code == 201) {
+                    alert(result.msg);
+                } else if (result.code == 202) {
+                    alert(result.msg)
+                }
+            }
+            return false;
+        });
+        return false;
+    };
+
+    function xhr(data, method, url, callback) {
+        var xhr = new XMLHttpRequest();
+        if (xhr) {
+            xhr.open(method, url, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onreadystatechange = function () {
+                if ((xhr.readyState == 4) && (xhr.status == 200)) {
+                    callback(false, JSON.parse(xhr.responseText))
+                } else {
+                    callback(true)
+                }
+            };
+
+        } else {
+            return true;
+        }
+        xhr.send(data);
+        return false;
+    }
+
+</script>
+</body>
+</html>

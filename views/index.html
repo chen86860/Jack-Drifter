@@ -7,81 +7,153 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Jack_Drifter</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .warp {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            position: relative;
+        }
+
+        footer {
+            width: 100%;
+            height: 100px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .warp > footer > section {
+            width: 33.3%;
+            float: left;
+            height: 100px;
+            bottom: 0;
+            left: 0;
+        }
+
+        section > form {
+            width: auto;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+        }
+
+        section > form > input {
+            display: block;
+            width: 100%;
+            border: 1px solid #2196f3;
+            outline: none;
+            background-color: #2196f3;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            margin: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        article > p {
+            padding: 0;
+            margin: 0;
+        }
+
+        .e_hidden {
+            display: none;
+        }
+
+        #contain {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: block;
+            z-index: 1;
+            background-color: #efefef;
+            position: absolute;
+            visibility: hidden;
+        }
+    </style>
 </head>
 
 <body>
 <div class="warp">
-    <form action="/api/" method="get" id='pickForm'>
-        <ul>
-            <li>
-                <p>用户名：<input type="text" name="user" required id="user"></p>
-            </li>
-            <li>
-                <p><select name="type" class="sexType">
-                    <option value="male" selected>男</option>
-                    <option value="female">女</option>
-                </select></p>
-            </li>
-            <li>
-                <p>
-                    <input type="submit" value="捡一个">
-                </p>
-            </li>
-        </ul>
-    </form>
-    <hr>
-    <form action="/api" method="post" id='throwForm'>
-        <ul>
-            <li>
-                <p>用户名：<input type="text" name="user" required id="owner"></p>
-            </li>
-            <li>
-                <p><select name="type" class="sexType">
-                    <option value="male" selected>男</option>
-                    <option value="female">女</option>
-                </select></p>
-            </li>
-            <li>
-                <p>内容：<input type="text" name="content" required id="content"></p>
-            </li>
-            <li>
-                <p>
-                    <input type="submit" value="扔一个">
-                </p>
-            </li>
-        </ul>
-    </form>
+    <article id="contain" onclick="showcontain()">
+    </article>
+    <footer>
+        <section>
+            <form action="/api/post" method="post" id='throwForm'>
+                <!--<p>内容：<input type="text" name="content" required id="content"></p>-->
+                <input type="submit" value="扔一个">
+            </form>
+        </section>
 
-    <input type="submit" id="insertButton" value="捡一个">
+        <section>
+            <form action="/api/" method="get" id='pickForm'>
+                <input type="submit" value="捡一个">
+            </form>
+        </section>
+        <section>
+            <form id="reply">
+                <!--<p>回复内容<input type="text" id="replyContent"></p>-->
+                <input type="submit" value="我的瓶子">
+            </form>
+        </section>
+    </footer>
 </div>
-
 <script>
-
-    var insertButton = document.getElementById('insertButton');
+    var contain = document.getElementById('contain');
     var pickForm = document.getElementById('pickForm');
-
-    var user = document.getElementById('user');
-    var sexType0 = document.getElementsByClassName('sexType')[0];
     pickForm.onsubmit = function () {
-        var userdata = "user=" + user.value + "&type=" + ['male', 'female'][sexType0.selectedIndex];
-        xhr(null, 'get', '/api?' + userdata, function (err, result) {
+        contain.style.visibility = 'visible';
+        xhr(null, 'get', '/api', function (err, result) {
+            var bottleContent = '';
             if (err) return true;
-            console.log(result);
+            if (result.id) {
+                var userid = result.id;
+                var vals = result.result;
+                if (vals.msg.owner) {
+                    bottleContent = '<p><span class="msg_owner">' + vals.msg.owner + '</span></p>' +
+                            '<p><span class="msg_content">' + vals.msg.content + '</span></p>' +
+                            '<p><span class="msg_time">' + vals.msg.time + '</span></p>' +
+                            '<p><span class="msg_select"><input type="button" class="msg_cancle" onclick="showcontain()" value="扔回海里">' +
+                            '<input type="button" class="msg_reply" value="回应" id="msg_reply"></span></p>'
+                } else {
+                    bottleContent = '<span class="title">' + vals.msg + '</span>';
+                }
+            }
+            else {
+                bottleContent = '<span class="title">' + result.msg + '</span>';
+            }
+            contain.innerHTML = bottleContent;
+            bottleContent = '';
         });
         return false;
     };
 
     //owner,type,time,content
-    var owner = document.getElementById('owner');
     var content = document.getElementById('content');
     var throwForm = document.getElementById('throwForm');
-    var sexType1 = document.getElementsByClassName('sexType')[1];
+
+
 
     throwForm.onsubmit = function () {
-
         var time = Date.now();
-        var datas = "owner=" + owner.value + "&type=" + ['male', 'female'][sexType1.selectedIndex] + "&content=" + content.value + "&time=" + time;
-
+        var datas = "content=" + 'hello world' + Math.random() * 10000 + "&time=" + time;
+//        var datas = "content=" + content.value + "&time=" + time;
         xhr(datas, 'post', '/api', function (err, result) {
             if (err) {
                 console.log("err");
@@ -94,21 +166,26 @@
         return false;
     };
 
-
-    insertButton.onclick = function () {
-        insertBottle();
-    };
-
-
-    function insertBottle() {
-        for (var i = 0; i < 5; i++) {
-            xhr(encodeURI("owner=bottle" + i + "&type=male&content=content" + i))
-        }
-        for (var t = 5; t < 10; t++) {
-            xhr(encodeURI("owner=bottle" + t + "&type=female&content=content" + t))
-        }
+    function showcontain() {
+        contain.innerHTML = '';
+        contain.style.visibility = 'hidden'
     }
 
+    var reply = document.getElementById('reply');
+    var replyContent = document.getElementById('replyContent');
+    reply.onsubmit = function () {
+        var datas = "content=" + replyContent.value + "&_id=" + '57afc4beac07ec9e165a8923';
+        xhr(datas, 'post', '/reply', function (err, result) {
+            if (err) {
+                return true;
+            }
+            else {
+                console.log(result.result);
+                console.log(result.id);
+            }
+            return false;
+        })
+    };
 
     function xhr(data, method, url, callback) {
         var xhr = new XMLHttpRequest();
@@ -118,7 +195,7 @@
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onreadystatechange = function () {
                 if ((xhr.readyState == 4) && (xhr.status == 200)) {
-                    callback(false, xhr.responseText);
+                    callback(false, JSON.parse(xhr.responseText));
                 } else {
                     callback(true, "err");
                 }

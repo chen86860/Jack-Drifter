@@ -5,7 +5,11 @@ var mongodb = require('../model/mongoose');
 
 /* GET drifter bottom. */
 router.route('/').get(function (req, res, next) {
-    res.render('index')
+    if (req.session.username) {
+        res.render('index')
+    } else {
+        res.redirect('/user/login')
+    }
 });
 
 router.route('/bottle/:_id').get(function (req, res, next) {
@@ -14,61 +18,72 @@ router.route('/bottle/:_id').get(function (req, res, next) {
     });
 });
 
-router.route('/reply/:_id')
+router.route('/reply')
     .post(function (req, res, next) {
-        if (req.body.user && req.body.content) {
-            mongodb.reply(req.params._id, req.body, function (result) {
-                res.json(result);
+        req.body.user = req.session.username;
+        if (req.body.content) {
+            mongodb.reply(req.body._id, req.body, function (err, result) {
+                if (err) {
+                    console.error(result)
+                } else {
+                    return res.json(result);
+                }
             })
         } else {
-            return callback({code: 0, msg: '回复信息不完整呀～'});
+            return res.json({code: 0, msg: '回复信息不完整呀～'});
         }
     });
 
 router.route('/api')
     .get(function (req, res, next) {
-        if (req.query.user) {
-            if (req.query.type && (["male", "female"].indexOf(req.query.type) != -1)) {
-                redis.pick(req.query, function (result) {
-                    if (result.code === 1) {
-                        mongodb.save(req.query.user, result.msg, function (err) {
-                            if (err) {
-                                res.json({code: 0, msg: "获取信息失败"});
-                            }
-                            else {
-                                res.json(result);
-                            }
-                        })
-                    } else {
-                        res.json(result);
+        req.body.type = ['male', 'female'][Math.round(Math.random())];
+        req.body.user = req.session.username;
+        redis.pick(req.body, function (result) {
+            if (result.code === 1) {
+                //获取瓶子，如果获取到，则保存到数据库中
+                mongodb.save(req.session.username, result.msg, function (err, obj) {
+                    if (err) {
+                        res.json({code: 0, msg: "获取信息失败"});
                     }
+                    else {
 
+                        res.json({
+                            result: result,
+                            id: obj.id
+                        });
+                    }
                 })
             } else {
-                return res.json({"code": 0, "msg": "类型错误"})
+                res.json(result);
             }
-        } else {
-            return res.json({"code": 0, "msg": "信息不完整1"})
-        }
+
+        })
     })
     .post(function (req, res, next) {
-        if ((req.body.owner && req.body.type && req.body)) {
-            if (req.body.type && (['male', 'female'].indexOf(req.body.type)) != -1) {
-                redis.throw(req.body, function (result) {
-                    res.json(result);
-                })
-            } else {
-                return res.json({"code": 0, "msg": "类型选择错误"})
-            }
+        req.body.owner = req.session.username;
+
+        //性别先用随机函数，后期应从注册的用户信息里获取
+        req.body.type = ['male', 'female'][Math.round(Math.random())];
+        if (( req.body)) {
+            redis.throw(req.body, function (result) {
+                res.json(result);
+            })
         }
         else {
             return res.json({"code": 0, "msg": '信息不完整2'});
         }
     });
-router.route('/user/:user').get(function (req, res, next) {
-    mongodb.getAll(req.params.user, function (err, result) {
-        res.json(result)
-    })
-});
+
+router.route('/userBottle/:user')
+    .get(function (req, res, next) {
+        mongodb.getAll(req.params.user, function (err, result) {
+            if (err) {
+                return console.log(result);
+            }
+            {
+                res.json(result);
+            }
+        })
+    });
 
 module.exports = router;

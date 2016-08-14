@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var md5 = require('md5');
 
 mongoose.connect('mongodb://localhost/Jack_drifter', {server: {poolSoze: 10}});
 
@@ -22,6 +23,67 @@ var bottleModel = mongoose.model('Bottle', new mongoose.Schema(
 // ]
 // }
 
+//userprofile
+var userInfo = mongoose.model('userinfo', new mongoose.Schema({
+        username: String,
+        password: String,
+        email: String,
+        regTime: String
+    }, {
+        collection: "userinfo"
+    }
+));
+
+//signup
+exports.userreg = function (regbody, callback) {
+    var time = Date.now();
+    var newuser = {};
+    newuser.username = regbody.username;
+    //check user
+    userInfo.find({username: regbody.username}, function (err, result) {
+        if (err) {
+            callback(true, {code: 202, msg: "username is exist"})
+        } else {
+            if (result.length > 0) {
+                callback(true, {code: 202, msg: "username is exist"})
+            } else {
+
+                newuser.password = md5(regbody.password);
+                newuser.email = regbody.email;
+                newuser.time = time;
+                newuser = new userInfo(newuser);
+
+                //save to db
+                newuser.save(function (err, result) {
+                    if (err) {
+                        callback(true, {code: 201, msg: "connect err"});
+                    } else {
+                        callback(false, {code: 200, msg: "success"});
+                    }
+                })
+            }
+        }
+    })
+};
+
+exports.userlog = function (logbody, callback) {
+    userInfo.find({
+        username: logbody.username,
+        password: md5(logbody.password)
+    }, function (err, result) {
+        if (err) {
+            callback(true, {code: 201, msg: "login failed"});
+        }
+        else {
+            if (result.length > 0) {
+                callback(false, {code: 200, msg: "success"})
+            } else {
+                callback(true, {code: 202, msg: "username or passwords is not match"})
+            }
+        }
+    })
+};
+
 exports.save = function (picker, _bottle, callback) {
     var bottle = {bottle: [], message: []};
     bottle.bottle.push(picker);
@@ -29,8 +91,8 @@ exports.save = function (picker, _bottle, callback) {
     bottle = new bottleModel(bottle);
 
     //mongoose保存的方法
-    bottle.save(function (err) {
-        callback(err)
+    bottle.save(function (err, result) {
+        callback(err, result)
     });
 };
 
@@ -49,7 +111,7 @@ exports.reply = function (_id, reply, callback) {
     //通过ID找到回复的漂流瓶
     bottleModel.findById(_id, function (err, _bottle) {
         if (err) {
-            return callback({code: 0, msg: "回复漂流瓶失败"});
+            return callback(true, {code: 0, msg: "回复漂流瓶失败"});
         }
         else {
             var newBottle = {};
@@ -63,25 +125,22 @@ exports.reply = function (_id, reply, callback) {
             //在message添加回复信息
             newBottle.message.push([reply.user, reply.time, reply.content]);
             //更新数据库中该漂流瓶的信息
-            bottleModel.findByIdAndUpdate(_id, newBottle, function (err, bottle) {
+            bottleModel.findByIdAndUpdate(_id, newBottle, null, function (err, bottle) {
                 if (err) {
-                    return callback({code: 0, msg: "回复漂流瓶失败..."});
+                    return callback(true, {code: 0, msg: "回复漂流瓶失败..."});
                 }
                 //返回漂流瓶信息
-                callback({code: 1, msg: bottle});
+                return callback(false, {code: 1, msg: bottle});
             });
         }
     });
 };
 
+//获取瓶子列表
 exports.getAll = function (user, callback) {
     console.log(user);
-    bottleModel.find({bottle:user},function(err,result){
-        if (err) return callback({code: 0, msg: "获取漂流瓶列表失败..."});
-        callback({code: 1, msg: result});
-    })
-    // bottleModel.find({bottle: user.toString()}, function (err, bottles) {
-    //     if (err) return callback({code: 0, msg: "获取漂流瓶列表失败..."});
-    //     callback({code: 1, msg: bottles});
-    // });
+    bottleModel.find({bottle: user}, function (err, result) {
+        if (err) return callback(true, {code: 0, msg: "获取漂流瓶列表失败..."});
+        callback(false, {code: 1, msg: result});
+    });
 };
