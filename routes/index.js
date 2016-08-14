@@ -61,7 +61,6 @@ router.route('/api')
     })
     .post(function (req, res, next) {
         req.body.owner = req.session.username;
-
         //性别先用随机函数，后期应从注册的用户信息里获取
         req.body.type = ['male', 'female'][Math.round(Math.random())];
         if (( req.body)) {

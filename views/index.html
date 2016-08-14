@@ -40,7 +40,7 @@
             left: 0;
         }
 
-        section > form {
+        section > div {
             width: auto;
             text-align: center;
             height: 100%;
@@ -49,7 +49,7 @@
             justify-content: center;
         }
 
-        section > form > input {
+        section > div > input {
             display: block;
             width: 100%;
             border: 1px solid #2196f3;
@@ -70,6 +70,37 @@
         article > p {
             padding: 0;
             margin: 0;
+            overflow: hidden;
+        }
+
+        article > p:first-child {
+            font-size: 35px;
+            margin: 10px;
+            height: 8%;
+            border-bottom: 1px dashed #191919;
+        }
+
+        .msg_select {
+            display: flex;
+            height: 66%;
+            width: 100%;
+        }
+
+        .msg_select > input {
+            width: 64%;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            height: 72%;
+            margin: 18px;
+            border: 1px solid #868686;
+            border-radius: 4px;
+            color: #505050;
+            font-size: 14px;
+            background-color: #ffffff;
+            box-sizing: border-box;
+            cursor: pointer;
+            outline: none;
         }
 
         .e_hidden {
@@ -81,44 +112,128 @@
             height: 100%;
             overflow: hidden;
             display: block;
-            z-index: 1;
-            background-color: #efefef;
+            z-index: 0;
+            background-color: #fbf2ab;
             position: absolute;
-            visibility: hidden;
+            /*visibility: hidden;*/
+            opacity: 0;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            -ms-transition: all 0.3s;
+            -o-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+        .msg_content {
+            display: flex;
+            padding: 10px;
+            background-color: #fbf2ab;
+            height: 100%;
+            overflow: visible;
+            margin: 0 auto;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        .msg_conent_p {
+            height: 77%;
+        }
+
+        .msg_select_p {
+            height: 12%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .bottleContent {
+            display: block;
+            width: 98%;
+            height: 84%;
+            background-color: #fbf2ab;
+            border: none;
+            padding: 10px;
+            outline: none;
+            overflow-y: scroll;
+        }
+
+        .bottleContain {
+            height: 100%;
+            width: 100%;
+        }
+
+        .bottleContain > span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 11%;
+        }
+
+        .bottleContain > span > input {
+            width: 50%;
+            height: 53%;
+            background-color: #ffffff;
+            border: 1px solid #868686;
+            border-radius: 4px;
+            color: #505050;
+            cursor: pointer;
+            outline: none;
+            margin: 10px;
+        }
+
+        .msg_return {
+            width: 100%;
+            height: 36px;
+            position: absolute;
+            text-align: center;
+            bottom: 29px;
+            display: block;
+        }
+
+        .msg_return > input {
+            width: 44%;
+            height: 34px;
+            background-color: #ffffff;
+            border: 1px solid #868686;
+            border-radius: 4px;
+            color: #505050;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
         }
     </style>
 </head>
 
 <body>
 <div class="warp">
-    <article id="contain" onclick="showcontain()">
+    <article id="contain">
     </article>
     <footer>
         <section>
-            <form action="/api/post" method="post" id='throwForm'>
-                <!--<p>内容：<input type="text" name="content" required id="content"></p>-->
+            <div id="initThrow">
                 <input type="submit" value="扔一个">
-            </form>
+            </div>
+
         </section>
 
         <section>
-            <form action="/api/" method="get" id='pickForm'>
+            <div id='pickForm'>
                 <input type="submit" value="捡一个">
-            </form>
+            </div>
         </section>
         <section>
-            <form id="reply">
+            <div id="reply">
                 <!--<p>回复内容<input type="text" id="replyContent"></p>-->
                 <input type="submit" value="我的瓶子">
-            </form>
+            </div>
         </section>
     </footer>
 </div>
 <script>
     var contain = document.getElementById('contain');
     var pickForm = document.getElementById('pickForm');
-    pickForm.onsubmit = function () {
-        contain.style.visibility = 'visible';
+    pickForm.onclick = function () {
+        contain.style.opacity = '1';
+        contain.style.zIndex = '2';
         xhr(null, 'get', '/api', function (err, result) {
             var bottleContent = '';
             if (err) return true;
@@ -127,33 +242,41 @@
                 var vals = result.result;
                 if (vals.msg.owner) {
                     bottleContent = '<p><span class="msg_owner">' + vals.msg.owner + '</span></p>' +
-                            '<p><span class="msg_content">' + vals.msg.content + '</span></p>' +
-                            '<p><span class="msg_time">' + vals.msg.time + '</span></p>' +
-                            '<p><span class="msg_select"><input type="button" class="msg_cancle" onclick="showcontain()" value="扔回海里">' +
+                            '<p class="msg_conent_p"><span class="msg_content">' + vals.msg.content + '</span></p>' +
+                            '<p class="msg_select_p"><span class="msg_select"><input type="button" class="msg_cancle" onclick="showcontain()" value="扔回海里">' +
                             '<input type="button" class="msg_reply" value="回应" id="msg_reply"></span></p>'
                 } else {
-                    bottleContent = '<span class="title">' + vals.msg + '</span>';
+                    bottleContent = '<span class="title">' + vals.msg + '</span>' +
+                            '<span  class="msg_return"><input type="button" onclick="showcontain()" value="返回"></span>';
                 }
             }
             else {
-                bottleContent = '<span class="title">' + result.msg + '</span>';
+                bottleContent = '<span class="title">' + result.msg + '</span>' +
+                        '<span  class="msg_return"><input type="button" onclick="showcontain()" value="返回"></span>';
             }
             contain.innerHTML = bottleContent;
             bottleContent = '';
         });
-        return false;
     };
 
     //owner,type,time,content
-    var content = document.getElementById('content');
-    var throwForm = document.getElementById('throwForm');
+    var initThrow = document.getElementById('initThrow');
+    initThrow.onclick = function () {
+        contain.style.opacity = '1';
+        contain.style.zIndex = '2';
+        var throwForm = document.createElement('div');
+        throwForm.className = "bottleContain";
+        throwForm.innerHTML = '<textarea spellcheck="false" autofocus placeholder="写你所想..." class="bottleContent" required id="content" ></textarea>' +
+                '<span><input type = "button" value = "再想想"   id=“btnthrow" onclick = "showcontain()" >' +
+                '<input type = "submit" value = "扔一个"   id=“btnthrow" onclick = "throwBottle()" ></span>';
+        contain.appendChild(throwForm);
 
+    };
 
-
-    throwForm.onsubmit = function () {
+    function throwBottle() {
+        var content = document.getElementById('content');
         var time = Date.now();
-        var datas = "content=" + 'hello world' + Math.random() * 10000 + "&time=" + time;
-//        var datas = "content=" + content.value + "&time=" + time;
+        var datas = "content=" + content.value + "&time=" + time;
         xhr(datas, 'post', '/api', function (err, result) {
             if (err) {
                 console.log("err");
@@ -163,17 +286,17 @@
                 console.log(result);
             }
         });
-        return false;
-    };
+    }
 
     function showcontain() {
         contain.innerHTML = '';
-        contain.style.visibility = 'hidden'
+        contain.style.opacity = '0';
+        contain.style.zIndex = 0;
     }
 
     var reply = document.getElementById('reply');
     var replyContent = document.getElementById('replyContent');
-    reply.onsubmit = function () {
+    reply.onclick = function () {
         var datas = "content=" + replyContent.value + "&_id=" + '57afc4beac07ec9e165a8923';
         xhr(datas, 'post', '/reply', function (err, result) {
             if (err) {
@@ -183,7 +306,6 @@
                 console.log(result.result);
                 console.log(result.id);
             }
-            return false;
         })
     };
 
