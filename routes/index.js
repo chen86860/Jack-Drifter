@@ -24,9 +24,9 @@ router.route('/reply')
         if (req.body.content) {
             mongodb.reply(req.body.id, req.body, function (err, result) {
                 if (err) {
-                    console.error(result)
+                    res.json({code: 0, msg: "succeed"});
                 } else {
-                    return res.json(result);
+                    res.json({code: 1, msg: "succeed"});
                 }
             })
         } else {
@@ -64,8 +64,12 @@ router.route('/api')
         //性别先用随机函数，后期应从注册的用户信息里获取
         req.body.type = ['male', 'female'][Math.round(Math.random())];
         if (( req.body)) {
-            redis.throw(req.body, function (result) {
-                res.json(result);
+            redis.throw(req.body, function (err, result) {
+                if (err) {
+                    res.json({code: 0, msg: "Oops,some thing has wrong"});
+                } else {
+                    res.json({code: 1, msg: "succeed"});
+                }
             })
         }
         else {
@@ -77,7 +81,7 @@ router.route('/userBottle')
     .get(function (req, res, next) {
         mongodb.getAll(req.session.username, function (err, result) {
             if (err) {
-                return console.log(result);
+                console.error(result);
             }
             {
                 res.json(result);

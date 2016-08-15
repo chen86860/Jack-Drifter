@@ -75,7 +75,7 @@ function checkPicTimes(owner, callback) {
         client.select(2, function () {
             client.get(owner, function (err, result) {
                 if (result >= 10) {
-                    return callback({code: 0, msg: "今天扔瓶子的机会已经用完了～"});
+                    return callback({code: 0, msg: "今天扔瓶子的机会已经用完啦～"});
                 }
                 else {
                     //增加扔瓶子的次数
@@ -140,10 +140,10 @@ function checkThrowTimes(owner, callback) {
 exports.throw = function (bottle, callback) {
     checkThrowTimes(bottle.owner, function (result) {
         if (result.code === 0) {
-            return callback(result);
+            return callback(true, result);
         }
         throwOneBottle(bottle, function (result) {
-            callback(result);
+            callback(false, result);
         });
     });
 };
