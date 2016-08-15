@@ -6,6 +6,7 @@ mongoose.connect('mongodb://localhost/Jack_drifter', {server: {poolSoze: 10}});
 //定义漂流瓶模型，病设置数据存储到bottles集合
 var bottleModel = mongoose.model('Bottle', new mongoose.Schema(
     {
+        owner: String,
         bottle: Array,
         message: Array
     }, {
@@ -85,8 +86,9 @@ exports.userlog = function (logbody, callback) {
 };
 
 exports.save = function (picker, _bottle, callback) {
-    var bottle = {bottle: [], message: []};
+    var bottle = {owner: "", bottle: [], message: []};
     bottle.bottle.push(picker);
+    bottle.owner = _bottle.owner;
     bottle.message.push([_bottle.owner, _bottle.time, _bottle.content]);
     bottle = new bottleModel(bottle);
 
@@ -139,7 +141,12 @@ exports.reply = function (_id, reply, callback) {
 //获取瓶子列表
 exports.getAll = function (user, callback) {
     console.log(user);
-    bottleModel.find({bottle: user}, function (err, result) {
+    //{"owner":user,"bottle":{$exists:true},$where:'this.bottle.length>1'}
+    bottleModel.find({
+        "owner": user,
+        "bottle": {$exists: true},
+        $where: 'this.bottle.length>1'
+    }, function (err, result) {
         if (err) return callback(true, {code: 0, msg: "获取漂流瓶列表失败..."});
         callback(false, {code: 1, msg: result});
     });

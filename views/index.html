@@ -1,19 +1,20 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Jack_Drifter</title>
+    <script type="text/javascript" src="/javascripts/jquery-3.1.0.slim.min.js"></script>
     <style>
         html, body {
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            background-color: #f6f6f6;
         }
 
         .warp {
@@ -47,6 +48,9 @@
             display: flex;
             align-items: stretch;
             justify-content: center;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #fff;
         }
 
         section > div > input {
@@ -101,6 +105,11 @@
             box-sizing: border-box;
             cursor: pointer;
             outline: none;
+            -webkit-transition: all .4s;
+            -moz-transition: all .4s;
+            -ms-transition: all .4s;
+            -o-transition: all .4s;
+            transition: all .4s;
         }
 
         .e_hidden {
@@ -110,29 +119,38 @@
         #contain {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            /* overflow: hidden; */
             display: block;
             z-index: 0;
-            background-color: #fbf2ab;
+            background-color: #f9f3c1;
             position: absolute;
-            /*visibility: hidden;*/
+            /* visibility: hidden; */
             opacity: 0;
             -webkit-transition: all 0.3s;
             -moz-transition: all 0.3s;
             -ms-transition: all 0.3s;
             -o-transition: all 0.3s;
             transition: all 0.3s;
+            background: -webkit-linear-gradient(top, #0076d1, #5db8ff);
+            background: -moz-linear-gradient(top, #0076d1, #5db8ff);
+            background: -o-linear-gradient(top, #0076d1, #5db8ff);
+            background: -ms-linear-gradient(top, #0076d1, #5db8ff);
+
         }
 
         .msg_content {
             display: flex;
             padding: 10px;
-            background-color: #fbf2ab;
-            height: 100%;
+            background-color: #f9f3c1;;
             overflow: visible;
             margin: 0 auto;
-            font-size: 18px;
             font-weight: normal;
+            word-break: break-all;
+            -webkit-transition: height .6s;
+            -moz-transition: height .6s;
+            -ms-transition: height .6s;
+            -o-transition: height .6s;
+            transition: height .6s;
         }
 
         .msg_conent_p {
@@ -140,7 +158,7 @@
         }
 
         .msg_select_p {
-            height: 12%;
+            height: 11.8%;
             display: flex;
             justify-content: center;
         }
@@ -149,11 +167,15 @@
             display: block;
             width: 98%;
             height: 84%;
-            background-color: #fbf2ab;
             border: none;
             padding: 10px;
             outline: none;
-            overflow-y: scroll;
+            overflow: hidden;
+            color: #fff;
+            background: -webkit-linear-gradient(top, #0076d1, #5db8ff);
+            background: -moz-linear-gradient(top, #0076d1, #5db8ff);
+            background: -o-linear-gradient(top, #0076d1, #5db8ff);
+            background: -ms-linear-gradient(top, #0076d1, #5db8ff);
         }
 
         .bottleContain {
@@ -165,7 +187,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 11%;
+            height: 12%;
+            background: -webkit-linear-gradient(top, #5cb7fe, #5db8ff);
+            background: -moz-linear-gradient(top, #5cb7fe, #5db8ff);
+            background: -o-linear-gradient(top, #5cb7fe, #5db8ff);
+            background: -ms-linear-gradient(top, #5cb7fe, #5db8ff);
+
         }
 
         .bottleContain > span > input {
@@ -200,30 +227,155 @@
             cursor: pointer;
             outline: none;
         }
+
+        #replyContent {
+            height: 100%;
+            padding-left: 6px;
+            padding-right: 6px;
+            background-color: #fff;
+            resize: none;
+            width: 100%;
+            margin: 10px auto;
+            border: 1px solid #a7a7a7;
+            outline: none;
+            display: block;
+            border-radius: 4px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .newreply {
+            width: 100%;
+            margin: 0 auto;
+            height: 39%;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .userBottleUl > li {
+            width: 95%;
+            background-color: #fff;
+            margin: 6px auto;
+            border: 1px solid #e2e2e2;
+            border-bottom: 2px solid #e2e2e2;
+            border-top: none;
+            border-radius: 2px;
+            padding: 10px;
+        }
+
+        .userBottleUl > li > a {
+            text-decoration: none;
+            color: #000;
+            width: 100%;
+            clear: both;
+            display: flex;
+            position: relative;
+            padding: 5px;
+            align-items: center;
+        }
+
+        .msg_content_owner {
+            width: 20%;
+            position: relative;
+            top: 0;
+            float: left;
+            min-width: 50px;
+            line-height: 100%;
+            text-align: center;
+            justify-content: center;
+            border-right: 1px solid #ddd;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .msg_conent_bottles {
+            width: 80%;
+            clear: right;
+            float: right;
+            font-size: 15px;
+            display: block;
+            padding: 10px;
+        }
+
+        .msg_content_owner_R {
+            border: none;
+            border-left: 1px solid #ddd;
+        }
+
+        #initThrow {
+            background-image: url("/images/bottle.svg");
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+            background-size: 39px;
+            background-position: 50%;
+        }
+
+        #myBottle {
+            background-image: url("/images/bottles.svg");
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+            background-size: 34px;
+            background-position: 50%;
+        }
+
+        #pickForm {
+            background-image: url("/images/hat.svg");
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+            background-size: 34px;
+            background-position: 50%;
+        }
+
+        #waves {
+            height: auto;
+            width: 100%;
+        }
+
+        .headline-bg.index-headline-bg {
+            width: 100%;
+            height: 680px;
+            overflow: hidden;
+            position: fixed;
+            background: -webkit-linear-gradient(top, #0076d1, #5db8ff);
+            background: -moz-linear-gradient(top, #0076d1, #5db8ff);
+            background: -o-linear-gradient(top, #0076d1, #5db8ff);
+            background: -ms-linear-gradient(top, #0076d1, #5db8ff)
+        }
+
     </style>
 </head>
 
 <body>
 <div class="warp">
     <article id="contain">
+
     </article>
+    <div class="headline-bg index-headline-bg wavesWapper">
+        <!--<p class="title">漂流瓶</p>-->
+        <canvas id="waves" class="waves"></canvas>
+    </div>
     <footer>
         <section>
-            <div id="initThrow">
-                <input type="submit" value="扔一个">
+            <div>
+                <input type="button" value="" id="initThrow">
+                <span>扔一个</span>
             </div>
 
         </section>
 
         <section>
-            <div id='pickForm'>
-                <input type="submit" value="捡一个">
+            <div>
+                <input type="button" value="" id='pickForm'>
+                <span>捡一个</span>
             </div>
         </section>
         <section>
-            <div id="reply">
-                <!--<p>回复内容<input type="text" id="replyContent"></p>-->
-                <input type="submit" value="我的瓶子">
+            <div>
+                <input type="button" value="" id="myBottle">
+                <span>我的瓶子</span>
             </div>
         </section>
     </footer>
@@ -231,6 +383,8 @@
 <script>
     var contain = document.getElementById('contain');
     var pickForm = document.getElementById('pickForm');
+    var userid = "";
+
     pickForm.onclick = function () {
         contain.style.opacity = '1';
         contain.style.zIndex = '2';
@@ -238,13 +392,15 @@
             var bottleContent = '';
             if (err) return true;
             if (result.id) {
-                var userid = result.id;
+                //漂流瓶id
+                userid = result.id;
+
                 var vals = result.result;
                 if (vals.msg.owner) {
                     bottleContent = '<p><span class="msg_owner">' + vals.msg.owner + '</span></p>' +
                             '<p class="msg_conent_p"><span class="msg_content">' + vals.msg.content + '</span></p>' +
                             '<p class="msg_select_p"><span class="msg_select"><input type="button" class="msg_cancle" onclick="showcontain()" value="扔回海里">' +
-                            '<input type="button" class="msg_reply" value="回应" id="msg_reply"></span></p>'
+                            '<input type="button" class="msg_reply" value="回应" id="msg_reply" onclick="replymsg()"></span></p>'
                 } else {
                     bottleContent = '<span class="title">' + vals.msg + '</span>' +
                             '<span  class="msg_return"><input type="button" onclick="showcontain()" value="返回"></span>';
@@ -272,18 +428,43 @@
         contain.appendChild(throwForm);
 
     };
+    //回应漂流瓶
+    function replymsg() {
+        var msg_reply = document.getElementById('msg_reply');
+        var msg_content = document.getElementsByClassName('msg_content')[0];
+        var msg_conent_p = document.getElementsByClassName('msg_conent_p')[0];
 
+        var newreply = document.createElement('div');
+        newreply.className = 'newreply';
+        newreply.innerHTML = '<textarea spellcheck="false" autofocus id="replyContent">';
+        msg_conent_p.appendChild(newreply);
+
+        var replyContent = document.getElementById('replyContent');
+        replyContent.focus();
+        msg_reply.style.backgroundColor = '#505050';
+        msg_reply.style.color = '#fff';
+        msg_reply.setAttribute('onclick', 'sendReply()');
+    }
+    function sendReply() {
+        var replyContent = document.getElementById('replyContent').value || "";
+        var datas = "id=" + userid + "&content=" + replyContent;
+        xhr(datas, 'post', '/reply', function (err, result) {
+            if (err) {
+                console.log(result)
+            } else {
+                console.log(result)
+            }
+        })
+    }
+
+    //扔一个漂流瓶
     function throwBottle() {
         var content = document.getElementById('content');
         var time = Date.now();
         var datas = "content=" + content.value + "&time=" + time;
         xhr(datas, 'post', '/api', function (err, result) {
             if (err) {
-                console.log("err");
                 return true;
-
-            } else {
-                console.log(result);
             }
         });
     }
@@ -294,21 +475,66 @@
         contain.style.zIndex = 0;
     }
 
-    var reply = document.getElementById('reply');
-    var replyContent = document.getElementById('replyContent');
-    reply.onclick = function () {
-        var datas = "content=" + replyContent.value + "&_id=" + '57afc4beac07ec9e165a8923';
-        xhr(datas, 'post', '/reply', function (err, result) {
+    var myBottle = document.getElementById('myBottle');
+    myBottle.onclick = function () {
+        xhr(null, 'get', '/userBottle', function (err, result) {
+            console.log(JSON.stringify(result));
             if (err) {
                 return true;
             }
             else {
-                console.log(result.result);
-                console.log(result.id);
+                contain.style.opacity = '1';
+                contain.style.zIndex = '2';
+                contain.style.backgroundColor = '#f2f2f2';
+                var msgsul = document.createElement('ul');
+                msgsul.className = 'userBottleUl';
+
+                var msgs = result.msg;
+                for (var key in msgs) {
+                    var msgsli = document.createElement('li');
+                    msgsli.innerHTML = '<a class="msg_conent_a" "  href=' + msgs[key]._id + '><span class="msg_content_owner">' + msgs[key].message[0][0] + '</span><span class="msg_conent_bottles">' + msgs[key].message[0][2] + '</span></a>';
+//                    console.log(msgs[key].message[0][0] + ":" + msgs[key].message[0][2]);
+                    msgsul.appendChild(msgsli);
+                }
+                contain.appendChild(msgsul);
+
+                var msg_conent_a_s = document.getElementsByClassName('msg_conent_a');
+                for (var i = 0; i < msg_conent_a_s.length; i++) {
+                    msg_conent_a_s[i].onclick = function () {
+                        flexContent(this.getAttribute('href'));
+                        return false;
+                    }
+                }
             }
         })
     };
+    function flexContent(id) {
+        xhr("id=" + id, 'post', '/bottle', function (err, result) {
+            if (err) {
+                return true;
+            } else {
+                contain.innerHTML = "";
+                var msgsul = document.createElement('ul');
+                msgsul.className = 'userBottleUl';
 
+                var owner = result.msg.owner;
+                var msgs = result.msg.message;
+
+//                console.log(JSON.stringify(msgs));
+                for (var i = 0; i < msgs.length; i++) {
+                    var msgsli = document.createElement('li');
+                    if (msgs[i][0] == owner) {
+                        msgsli.innerHTML = '<a><span class="msg_content_owner">' + msgs[i][0] + '</span><span class="msg_conent_bottles">' + msgs[i][2] + '</span></a>';
+
+                    } else {
+                        msgsli.innerHTML = '<a><span class="msg_conent_bottles">' + msgs[i][2] + '</span><span class="msg_content_owner msg_content_owner_R">' + msgs[i][0] + '</span></a>';
+                    }
+                    msgsul.appendChild(msgsli);
+                }
+                contain.appendChild(msgsul);
+            }
+        })
+    }
     function xhr(data, method, url, callback) {
         var xhr = new XMLHttpRequest();
         if (xhr) {
@@ -331,6 +557,8 @@
     }
 
 </script>
+<script type="text/javascript" src="/javascripts/vendors.js"></script>
+<script type="text/javascript" src="/javascripts/linewave.js"></script>
 </body>
 
 </html>

@@ -12,8 +12,8 @@ router.route('/').get(function (req, res, next) {
     }
 });
 
-router.route('/bottle/:_id').get(function (req, res, next) {
-    mongodb.getOne(req.params._id, function (result) {
+router.route('/bottle').post(function (req, res, next) {
+    mongodb.getOne(req.body.id, function (result) {
         res.json(result);
     });
 });
@@ -22,7 +22,7 @@ router.route('/reply')
     .post(function (req, res, next) {
         req.body.user = req.session.username;
         if (req.body.content) {
-            mongodb.reply(req.body._id, req.body, function (err, result) {
+            mongodb.reply(req.body.id, req.body, function (err, result) {
                 if (err) {
                     console.error(result)
                 } else {
@@ -39,15 +39,15 @@ router.route('/api')
         req.body.type = ['male', 'female'][Math.round(Math.random())];
         req.body.user = req.session.username;
         redis.pick(req.body, function (result) {
-            if (result.code === 1) {
+            if (result.msg.owner) {
                 //获取瓶子，如果获取到，则保存到数据库中
                 mongodb.save(req.session.username, result.msg, function (err, obj) {
                     if (err) {
                         res.json({code: 0, msg: "获取信息失败"});
                     }
                     else {
-
                         res.json({
+                            owner: result.owner,
                             result: result,
                             id: obj.id
                         });
@@ -73,9 +73,9 @@ router.route('/api')
         }
     });
 
-router.route('/userBottle/:user')
+router.route('/userBottle')
     .get(function (req, res, next) {
-        mongodb.getAll(req.params.user, function (err, result) {
+        mongodb.getAll(req.session.username, function (err, result) {
             if (err) {
                 return console.log(result);
             }
