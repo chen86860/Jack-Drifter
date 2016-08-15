@@ -140,7 +140,6 @@ exports.reply = function (_id, reply, callback) {
 
 //获取瓶子列表
 exports.getAll = function (user, callback) {
-    console.log(user);
     //{"owner":user,"bottle":{$exists:true},$where:'this.bottle.length>1'}
     bottleModel.find({
         "owner": user,
