@@ -1,65 +1,34 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Jack_Drifter</title>
-</head>
-<body>
-<form id="funForm" method="post">
-    <p>用户名<input type="text" name="username" id="username" required></p>
-    <p>密码<input type="password" name="password" id="password" required></p>
-    <p>邮箱<input type="email" name="email" id="email" required></p>
-    <p><input type="submit" value="登录"></p>
-</form>
-<script type="text/javascript">
+{% extends 'layout.html'%}
+{%block title%}
+Jack_Drifter--Sign Up
+{%endblock%}
+{%block head%}
+<link rel="stylesheet" href="/stylesheets/logSig-comm.css">
+{%endblock%}
 
-    var funForm = document.getElementById('funForm');
-    funForm.onsubmit = function () {
-        var username = document.getElementById('username');
-        var password = document.getElementById('password');
-        var email = document.getElementById('email');
-        var datas = "username=" + username.value + "&password=" + password.value + "&email=" + email.value;
-        xhr(datas, 'post', '/user/signup', function (err, result) {
-            if (err) {
-                return true
-            } else {
-                if (result.code == 200) {
-                    window.location.href = 'http://localhost:3000/';
-                } else if (result.code == 201) {
-                    alert(result.msg);
-                } else if (result.code == 202) {
-                    alert(result.msg)
-                }
-            }
-            return false;
-        });
-        return false;
-    };
+{%block body%}
 
-    function xhr(data, method, url, callback) {
-        var xhr = new XMLHttpRequest();
-        if (xhr) {
-            xhr.open(method, url, true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onreadystatechange = function () {
-                if ((xhr.readyState == 4) && (xhr.status == 200)) {
-                    callback(false, JSON.parse(xhr.responseText))
-                } else {
-                    callback(true)
-                }
-            };
+<div class="LoginBase">
+    <form action="/user/signup" method="post" id="funForm">
+        <h1 class="unified_signup__h1">Sign Up to Drift</h1>
+        <p class="unified_signup__title">Express exciting </p>
+        <ul class="userLogin">
+            <li class="loginUsername">
+                <input type="text" name="username" placeholder="Username" id="username" required>
+            </li>
+            <li class="loginPassword">
+                <input type="password" name="password" placeholder="Password" id="password" required>
+            </li>
+            <li class="loginEmail">
+                <input type="email" name="email" placeholder="Email Address" id="email" required>
+            </li>
+            <li><input class="button submit" type="submit" value="Sign Up"></li>
+        </ul>
+    </form>
 
-        } else {
-            return true;
-        }
-        xhr.send(data);
-        return false;
-    }
-
-</script>
-</body>
-</html>
+    <div class="form_footer">
+        <span>Already have an account? <a href="./login">Log in</a></span>
+    </div>
+</div>
+<script type="text/javascript" src="/javascripts/signup.js"></script>
+{%endblock%}

@@ -1,16 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Jack_Drifter</title>
-    <script type="text/javascript" src="/javascripts/jquery-3.1.0.slim.min.js"></script>
-    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
-</head>
+{% extends 'layout.html'%}
+{% block title %}
+    Jack_Drifter
+{%endblock %}
+{%block head %}
+<script type="text/javascript" src="/javascripts/jquery-3.1.0.slim.min.js"></script>
+<link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+{%endblock %}
 
-<body>
+{%block body%}
 <div class="warp">
     <article id="contain">
 
@@ -45,5 +42,4 @@
 <script type="text/javascript" src="/javascripts/index.js"></script>
 <script type="text/javascript" src="/javascripts/vendors.js"></script>
 <script type="text/javascript" src="/javascripts/linewave.js"></script>
-</body>
-</html>
+{% endblock %}
