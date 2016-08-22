@@ -18,6 +18,9 @@ function pickBottle() {
     xhr(null, 'get', '/api', function (err, result) {
         var bottleContent = '';
         if (err) return true;
+        if (result.code == 302) {
+            window.location.href = '/user/login';
+        }
         if (result.id) {
             //漂流瓶id
             userid = result.id;
@@ -67,6 +70,8 @@ function throwBottle() {
         xhr(datas, 'post', '/api', function (err, result) {
             if (err) {
                 return true;
+            } else if (result.code == 302) {
+                window.location.href = '/user/login';
             }
             else {
                 if (result.code && result.code === 1) {
@@ -79,7 +84,7 @@ function throwBottle() {
             }
         });
     } else {
-        alert("输入不正确啦～～")
+        alert("大哥，不要黑我。。。・(PД`q｡)・゜・")
     }
 }
 
@@ -109,7 +114,10 @@ function sendReply() {
         var datas = "id=" + userid + "&content=" + replyContent;
         xhr(datas, 'post', '/reply', function (err, result) {
             if (err) {
-            } else {
+            } else if (result.code == 302) {
+                window.location.href = '/user/login';
+            }
+            else {
                 if (result.code == 1) {
                     alert("成功了～");
                 }
@@ -121,7 +129,7 @@ function sendReply() {
             }
         })
     } else {
-        alert('输入不正确啦～')
+        alert('大哥，不要黑我。。。・(PД`q｡)・゜・')
     }
 }
 
@@ -136,6 +144,9 @@ function listBottle() {
     xhr(null, 'get', '/userBottle', function (err, result) {
         if (err) {
             return true;
+        }
+        else if (result.code == 302) {
+            window.location.href = '/user/login';
         }
         else {
             contain.style.opacity = '1';
@@ -171,7 +182,10 @@ function flexContent(id) {
     xhr("id=" + id, 'post', '/bottle', function (err, result) {
         if (err) {
             return true;
-        } else {
+        } else if (result.code == 302) {
+            window.location.href = '/user/login';
+        }
+        else {
             contain.innerHTML = "";
             var msgsul = document.createElement('ul');
             msgsul.className = 'userBottleUl';
@@ -204,11 +218,12 @@ function showcontain() {
 }
 
 //输入检查
-function checkInput(inpput) {
-    if (inpput != '') {
-        return true
+function checkInput(input) {
+    var patrn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]]/im;
+    if (patrn.test(input)) {
+        return false;
     }
-    return false;
+    return true;
 }
 //xhr发送数据
 function xhr(data, method, url, callback) {
