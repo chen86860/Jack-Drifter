@@ -7,6 +7,7 @@ mongoose.connect('mongodb://localhost/Jack_drifter', {server: {poolSoze: 10}});
 var bottleModel = mongoose.model('Bottle', new mongoose.Schema(
     {
         owner: String,
+        picker: String,
         bottle: Array,
         message: Array
     }, {
@@ -89,6 +90,7 @@ exports.save = function (picker, _bottle, callback) {
     var bottle = {owner: "", bottle: [], message: []};
     bottle.bottle.push(picker);
     bottle.owner = _bottle.owner;
+    bottle.pciker = '';
     bottle.message.push([_bottle.owner, _bottle.time, _bottle.content]);
     bottle = new bottleModel(bottle);
 
@@ -118,6 +120,7 @@ exports.reply = function (_id, reply, callback) {
         else {
             var newBottle = {};
             newBottle.bottle = _bottle.bottle;
+            newBottle.picker = reply.user;
             newBottle.message = _bottle.message;
             //如果已经回复，则在bottle键添加漂流瓶主人
             //如果已经回复过漂流瓶，则不再添加
@@ -142,11 +145,16 @@ exports.reply = function (_id, reply, callback) {
 exports.getAll = function (user, callback) {
     //{"owner":user,"bottle":{$exists:true},$where:'this.bottle.length>1'}
     bottleModel.find({
-        "owner": user,
+        "picker": user,
         "bottle": {$exists: true},
         $where: 'this.bottle.length>1'
     }, function (err, result) {
-        if (err) return callback(true, {code: 0, msg: "获取漂流瓶列表失败..."});
-        callback(false, {code: 1, msg: result});
+        if (err) {
+            return callback(true, {code: 0, msg: "获取漂流瓶列表失败..."});
+        }
+        else {
+
+            return callback(false, {code: 1, msg: result});
+        }
     });
 };

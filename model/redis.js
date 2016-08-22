@@ -30,11 +30,11 @@ function pickOneBottle(info, callback) {
                 if (!bottleId) return callback({code: 1, msg: "海星"});
                 client.hgetall(bottleId, function (err, bottle) {
                     if (err) return callback({code: 0, msg: "漂流瓶破损了。。。"});
-                    //从redis中删除漂流瓶
-                    // client.del(bottleId, function () {
-                    //     // pool.destory(client)
-                    //     pool.release(client);
-                    // });
+                    // 从redis中删除漂流瓶
+                    client.del(bottleId, function () {
+                        // pool.destory(client)
+                        pool.release(client);
+                    });
                     pool.release(client);
                     callback({code: 1, msg: bottle})
                 })
